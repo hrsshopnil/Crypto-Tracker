@@ -8,24 +8,15 @@
 import SwiftUI
 
 struct HomeView: View {
+    
+    @State private var showPortfolio = false
+    
     var body: some View {
         NavigationView {
             ZStack {
                 VStack {
-                    HStack {
-                        CircleButton(name: "info")
-                        Spacer()
-                        
-                        Text("Live Price")
-                            .font(.title3)
-                            .bold()
-                        
-                        Spacer()
-                        
-                        CircleButton(name: "chevron.left")
-                        
-                    }
-                    .padding(.horizontal, 18)
+                    HomeHeaderView(showPortfolio: $showPortfolio)
+                    .padding(.horizontal)
                     Spacer(minLength: 0)
                 }
             }

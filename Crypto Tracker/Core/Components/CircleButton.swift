@@ -12,12 +12,15 @@ struct CircleButton: View {
     var body: some View {
         Image(systemName: name)
             .font(.title3)
+            .frame(width: 50, height: 50)
             .bold()
-            .padding(14)
             .background {
+                Circle()
+                    .foregroundStyle(.black)
                 Circle()
                     .stroke(.white, lineWidth: 1.4)
             }
+            .padding()
     }
 }
 
