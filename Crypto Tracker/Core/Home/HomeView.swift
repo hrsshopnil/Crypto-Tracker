@@ -9,15 +9,25 @@ import SwiftUI
 
 struct HomeView: View {
     
+    @EnvironmentObject private var vm: HomeViewModel
     @State private var showPortfolio = false
     
     var body: some View {
         NavigationView {
             ZStack {
-                VStack {
+                VStack(spacing: 0) {
                     HomeHeaderView(showPortfolio: $showPortfolio)
-                    .padding(.horizontal)
-                    Spacer(minLength: 0)
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                    columnTitles()
+                        .padding(.horizontal, 21)
+                    if !showPortfolio {
+                        allCoinsList()
+                            .transition(.move(edge: .leading))
+                    } else {
+                        portfolioCoinsList()
+                            .transition(.move(edge: .trailing))
+                    }
                 }
             }
             .navigationBarHidden(true)
@@ -27,4 +37,44 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
+        .environmentObject(HomeViewModel())
+}
+
+extension HomeView {
+    private func allCoinsList() -> some View {
+        List {
+            ForEach(vm.allCoins) { coin in
+                CoinRowView(coin: coin, showCenterColumn: false)
+                
+            }
+        }
+        .listStyle(.plain)
+    }
+    
+    private func portfolioCoinsList() -> some View {
+        List {
+            ForEach(vm.portfolioCoins) { coin in
+                CoinRowView(coin: coin, showCenterColumn: true)
+                
+            }
+        }
+        .listStyle(.plain)
+    }
+    
+    private func columnTitles() -> some View {
+        HStack {
+            Text("Coin")
+            Spacer()
+            if showPortfolio {
+                Text("Holdings")
+                
+                    .padding(.trailing, 6)
+            }
+            Text("Price")
+                .frame(width: UIScreen.main.bounds.width / 3.5, alignment: .trailing)
+            
+        }
+        .font(.caption)
+        .foregroundStyle(.secondary)
+    }
 }

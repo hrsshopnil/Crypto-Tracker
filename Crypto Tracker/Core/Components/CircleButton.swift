@@ -14,11 +14,10 @@ struct CircleButton: View {
             .font(.title3)
             .frame(width: 50, height: 50)
             .bold()
+            
             .background {
                 Circle()
-                    .foregroundStyle(.black)
-                Circle()
-                    .stroke(.white, lineWidth: 1.4)
+                    .stroke(lineWidth: 1.4)
             }
             .padding()
     }

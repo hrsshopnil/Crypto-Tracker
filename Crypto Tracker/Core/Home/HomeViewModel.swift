@@ -8,5 +8,6 @@
 import Foundation
 
 class HomeViewModel: ObservableObject {
-    
+    @Published var allCoins: [CoinModel] = [.placeHolder]
+    @Published var portfolioCoins: [CoinModel] = [.placeHolder]
 }

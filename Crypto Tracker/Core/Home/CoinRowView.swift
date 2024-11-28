@@ -13,14 +13,14 @@ struct CoinRowView: View {
     var body: some View {
         HStack(spacing: 12) {
             leftColumn()
+            
             Spacer()
             if showCenterColumn {
                 centerColumn()
             }
-            Spacer()
             rightColumn()
+            
         }
-        .padding()
         .font(.subheadline)
     }
 }
@@ -58,5 +58,7 @@ extension CoinRowView {
                 )
         }
         
+        .frame(width: UIScreen.main.bounds.width / 3.5, alignment: .trailing)
     }
+    
 }
