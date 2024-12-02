@@ -10,6 +10,7 @@ import SwiftUI
 struct CoinRowView: View {
     let coin: CoinModel
     let showCenterColumn: Bool
+    let image: String
     var body: some View {
         HStack(spacing: 12) {
             leftColumn()
@@ -26,15 +27,14 @@ struct CoinRowView: View {
 }
 
 #Preview {
-    CoinRowView(coin: .placeHolder, showCenterColumn: true)
+    CoinRowView(coin: .placeHolder, showCenterColumn: true, image: "")
 }
 
 extension CoinRowView {
     private func leftColumn() -> some View {
         HStack {
             Text("\(coin.rank)")
-            Circle()
-                .frame(width: 30, height: 30)
+            IconView(url: image)
             Text(coin.symbol.uppercased())
                 .font(.headline)
         }

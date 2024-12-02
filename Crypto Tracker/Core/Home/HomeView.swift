@@ -44,7 +44,7 @@ extension HomeView {
     private func allCoinsList() -> some View {
         List {
             ForEach(vm.allCoins) { coin in
-                CoinRowView(coin: coin, showCenterColumn: false)
+                CoinRowView(coin: coin, showCenterColumn: false, image: coin.image)
                 
             }
         }
@@ -54,7 +54,7 @@ extension HomeView {
     private func portfolioCoinsList() -> some View {
         List {
             ForEach(vm.portfolioCoins) { coin in
-                CoinRowView(coin: coin, showCenterColumn: true)
+                CoinRowView(coin: coin, showCenterColumn: true, image: coin.image)
                 
             }
         }
