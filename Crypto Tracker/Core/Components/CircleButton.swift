@@ -12,9 +12,13 @@ struct CircleButton: View {
     var body: some View {
         Image(systemName: name)
             .font(.title3)
-            .frame(width: 50, height: 50)
+            .frame(width: 40, height: 40)
             .bold()
-            
+            .background(
+                Circle()
+                    .foregroundStyle(.buttonBg)
+            )
+            .padding(2)
             .background {
                 Circle()
                     .stroke(lineWidth: 1.4)
