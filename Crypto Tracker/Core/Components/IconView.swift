@@ -6,19 +6,29 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct IconView: View {
     let url: String
     var body: some View {
-        AsyncImage(url: URL(string: url)) { image in
-            image
-                .resizable()
-                .scaledToFit()
-                .frame(width: 30, height: 30)
-                .clipShape(Circle())
-        } placeholder: {
-            ProgressView()
-        }
+        KFImage(URL(string: url))
+            .placeholder({ progress in
+                ProgressView()
+            })
+            .resizable()
+            .scaledToFit()
+            .frame(width: 30, height: 30)
+            .clipShape(Circle())
+            
+//        AsyncImage(url: URL(string: url)) { image in
+//            image
+//                .resizable()
+//                .scaledToFit()
+//                .frame(width: 30, height: 30)
+//                .clipShape(Circle())
+//        } placeholder: {
+//            ProgressView()
+//        }
     }
 }
 
