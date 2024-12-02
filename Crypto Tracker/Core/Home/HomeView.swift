@@ -19,6 +19,8 @@ struct HomeView: View {
                     HomeHeaderView(showPortfolio: $showPortfolio)
                         .padding(.horizontal)
                         .padding(.bottom)
+                    
+                    SearchBar(text: $vm.searchText)
                     columnTitles()
                         .padding(.horizontal, 21)
                     if !showPortfolio {
