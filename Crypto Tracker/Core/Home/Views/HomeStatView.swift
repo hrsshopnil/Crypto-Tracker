@@ -8,11 +8,24 @@
 import SwiftUI
 
 struct HomeStatView: View {
+    
+    @EnvironmentObject var vm: HomeViewModel
+    @Binding var showPortfolio: Bool
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        HStack {
+            ForEach(vm.stats) { stat in
+                StatisticsView(stat: stat)
+                    .frame(width: UIScreen.main.bounds.width / 3)
+            }
+        }
+        .frame(width: UIScreen.main.bounds.width,
+               alignment: showPortfolio ? .trailing : .leading
+        )
     }
 }
 
 #Preview {
-    HomeStatView()
+    HomeStatView(showPortfolio: .constant(false))
+        .environmentObject(HomeViewModel())
 }

@@ -21,6 +21,7 @@ struct StatisticsView: View {
                 Image(systemName: "triangle.fill")
                     .font(.caption2)
                     .rotationEffect(Angle(degrees: (stat.percentageChange) ?? 0 >= 0 ? 0 : 180))
+                    .opacity(stat.percentageChange == nil ? 0 : 1)
                 Text(stat.percentageChange?.asPercentString() ?? "")
                     .font(.caption)
                     .bold()

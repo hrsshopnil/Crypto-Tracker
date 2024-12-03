@@ -19,7 +19,7 @@ struct HomeView: View {
                     HomeHeaderView(showPortfolio: $showPortfolio)
                         .padding(.horizontal)
                         .padding(.bottom)
-                    
+                    HomeStatView(showPortfolio: $showPortfolio)
                     SearchBar(text: $vm.searchText)
                     columnTitles()
                         .padding(.horizontal, 21)
