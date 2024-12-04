@@ -6,12 +6,9 @@
 //
 
 import Foundation
-import Combine
-
 
 class CoinDataService: ObservableObject {
     @Published var allCoins: [CoinModel] = []
-    var cancellable: AnyCancellable?
     var manager = NetworkManager()
     init() {
         getCoins()
