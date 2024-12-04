@@ -35,6 +35,7 @@ extension CoinRowView {
         HStack {
             Text("\(coin.rank)")
             IconView(url: image)
+                .frame(width: 30, height: 30)
             Text(coin.symbol.uppercased())
                 .font(.headline)
         }

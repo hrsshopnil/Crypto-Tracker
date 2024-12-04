@@ -11,12 +11,13 @@ struct HomeView: View {
     
     @EnvironmentObject private var vm: HomeViewModel
     @State private var showPortfolio = false
+    @State private var showSheet = false
     
     var body: some View {
         NavigationView {
             ZStack {
                 VStack(spacing: 0) {
-                    HomeHeaderView(showPortfolio: $showPortfolio)
+                    homeHeader()
                         .padding(.horizontal)
                         .padding(.bottom)
                     HomeStatView(showPortfolio: $showPortfolio)
@@ -30,6 +31,10 @@ struct HomeView: View {
                         portfolioCoinsList()
                             .transition(.move(edge: .trailing))
                     }
+                }
+                .sheet(isPresented: $showSheet) {
+                    SheetView()
+                        .environmentObject(vm)
                 }
             }
             .navigationBarHidden(true)
@@ -78,5 +83,38 @@ extension HomeView {
         }
         .font(.caption)
         .foregroundStyle(.secondary)
+    }
+    
+    private func homeHeader() -> some View {
+        HStack {
+            CircleButton(name: showPortfolio ? "plus" : "info")
+                .animation(.none)
+                .background (
+                    CircleButtonAnimation(animate: $showPortfolio)
+                )
+                .onTapGesture {
+                    if showPortfolio {
+                        showSheet.toggle()
+                    }
+                }
+            Spacer()
+            
+            Text(showPortfolio ? "Portfolio" : "Live Price")
+                .font(.title3)
+                .bold()
+                .animation(.none)
+            
+            Spacer()
+            
+            CircleButton(name: "chevron.right")
+                .rotationEffect(Angle(degrees: showPortfolio ? 180 : 0))
+                .onTapGesture {
+                    withAnimation(.spring()) {
+                        showPortfolio.toggle()
+                    }
+                }
+            
+        }
+
     }
 }

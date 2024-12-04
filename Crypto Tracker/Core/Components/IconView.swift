@@ -17,18 +17,7 @@ struct IconView: View {
             })
             .resizable()
             .scaledToFit()
-            .frame(width: 30, height: 30)
             .clipShape(Circle())
-            
-//        AsyncImage(url: URL(string: url)) { image in
-//            image
-//                .resizable()
-//                .scaledToFit()
-//                .frame(width: 30, height: 30)
-//                .clipShape(Circle())
-//        } placeholder: {
-//            ProgressView()
-//        }
     }
 }
 
