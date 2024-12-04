@@ -10,7 +10,7 @@ import SwiftUI
 struct SheetView: View {
     
     @EnvironmentObject private var vm: HomeViewModel
-    @State private var selectedCoin: CoinModel?
+    @State private var selectedCoin: [CoinModel] = []
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -19,18 +19,30 @@ struct SheetView: View {
                 VStack {
                     SearchBar(text: $vm.searchText)
                     ScrollView(.horizontal, showsIndicators: false) {
-                        LazyHStack {
+                        LazyHStack(spacing: 8) {
                             ForEach(vm.allCoins) { coin in
                                 CoinLogoView(coin: coin)
                                     .padding(8)
                                     .onTapGesture {
                                         withAnimation {
-                                            selectedCoin = coin
+                                            withAnimation {
+                                                if !selectedCoin.contains(where: { $0.id == coin.id }) {
+                                                    selectedCoin.append(coin)
+                                                } else {
+                                                    if let index = selectedCoin.firstIndex(where: { $0.id == coin.id }) {
+                                                        selectedCoin.remove(at: index)
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                     .background {
                                         RoundedRectangle(cornerRadius: 8)
-                                            .stroke(selectedCoin?.id == coin.id ? .green : .clear, lineWidth: 2)
+                                            .stroke(
+                                                selectedCoin.contains(where: { $0.id == coin.id }) ? Color.green : Color.clear,
+                                                lineWidth: 2
+                                            )
+                                        
                                     }
                             }
                         }
