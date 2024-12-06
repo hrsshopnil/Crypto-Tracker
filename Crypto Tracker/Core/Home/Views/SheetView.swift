@@ -10,64 +10,128 @@ import SwiftUI
 struct SheetView: View {
     
     @EnvironmentObject private var vm: HomeViewModel
-    @State private var selectedCoin: [CoinModel] = []
+    @State var selectedCoin: CoinModel?
     @Environment(\.dismiss) private var dismiss
+    @State private var amount = ""
+    @State private var showCheckmark = false
     
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack {
                     SearchBar(text: $vm.searchText)
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        LazyHStack(spacing: 8) {
-                            ForEach(vm.allCoins) { coin in
-                                CoinLogoView(coin: coin)
-                                    .padding(8)
-                                    .onTapGesture {
-                                        withAnimation {
-                                            withAnimation {
-                                                if !selectedCoin.contains(where: { $0.id == coin.id }) {
-                                                    selectedCoin.append(coin)
-                                                } else {
-                                                    if let index = selectedCoin.firstIndex(where: { $0.id == coin.id }) {
-                                                        selectedCoin.remove(at: index)
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    .background {
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .stroke(
-                                                selectedCoin.contains(where: { $0.id == coin.id }) ? Color.green : Color.clear,
-                                                lineWidth: 2
-                                            )
-                                        
-                                    }
-                            }
-                        }
-                        .padding(.leading, 16)
-                        .padding(.vertical, 6)
-                        //.background(.red)
+                    coinsList()
+                    
+                    if let coin = selectedCoin {
+                        portfolioInputSection(coin: coin)
                     }
                 }
-            }
-            .navigationTitle("Edit Profile")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    CircleButton(name: "xmark", width: 30, height: 30, font: .caption)
-                        .onTapGesture {
-                            dismiss()
-                        }
+                .navigationTitle("Edit Profile")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        CircleButton(name: "xmark", width: 30, height: 30, font: .caption)
+                            .onTapGesture {
+                                dismiss()
+                            }
+                    }
                 }
             }
         }
     }
+    
+    
 }
 
 #Preview {
-    SheetView()
+    SheetView(selectedCoin: .placeHolder)
         .environmentObject(HomeViewModel())
 }
 
+// MARK: Views
+extension SheetView {
+    private func coinsList() -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 8) {
+                ForEach(vm.allCoins) { coin in
+                    CoinLogoView(coin: coin)
+                        .padding(8)
+                        .onTapGesture {
+                            withAnimation {
+                                selectedCoin = coin
+                            }
+                        }
+                        .background {
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(selectedCoin?.id == coin.id ? .green : .clear, lineWidth: 2)
+                        }
+                }
+                .padding(.leading, 16)
+                .padding(.vertical, 6)
+            }
+        }
+    }
+    
+    private func portfolioInputSection(coin: CoinModel) -> some View {
+        VStack {
+            HStack {
+                Text("Current price of \(coin.symbol.uppercased()):")
+                Spacer()
+                Text("\(coin.currentPrice.asCurrencyWith2Decimals())")
+            }
+            Divider()
+            HStack {
+                Text("Amount Holding:")
+                TextField("Ex: 4.3", text: $amount)
+                    .multilineTextAlignment(.trailing)
+                    .keyboardType(.decimalPad)
+            }
+            Divider()
+        HStack {
+            Text("Current Value:")
+            Spacer()
+            Text(getCurrentValue().asCurrencyWith2Decimals())
+            }
+        }
+        .font(.headline)
+        .padding()
+    }
+    
+    private func trailingNavButton() -> some View {
+        HStack {
+            Image(systemName: "checkmark")
+                .opacity(showCheckmark ? 1 : 0)
+            
+            Button {
+                <#code#>
+            } label: {
+                Text("Save")
+                    .opacity(selectedCoin != nil && selectedCoin?.currentHoldings != Double(amount) ? 1 : 0)
+            }
+        }
+        .font(.headline)
+    }
+    
+}
+
+
+// MARK: Functions
+extension SheetView {
+    private func getCurrentValue() -> Double {
+        let amounts = Double(amount)
+        guard let coinPrice = selectedCoin?.currentPrice,
+              let amounts else { return 0 }
+        return amounts * coinPrice
+    }
+    
+    private func saveButtonPressed() {
+        guard let coin = selectedCoin else { return }
+        
+        //Save Coin to Portfolio
+    }
+    
+    private func removeSelectedCoin() {
+        selectedCoin = nil
+        vm.searchText = ""
+    }
+}
