@@ -24,6 +24,7 @@ struct SheetView: View {
                     
                     if let coin = selectedCoin {
                         portfolioInputSection(coin: coin)
+                            .animation(.none)
                     }
                 }
                 .navigationTitle("Edit Profile")
@@ -34,6 +35,9 @@ struct SheetView: View {
                             .onTapGesture {
                                 dismiss()
                             }
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        trailingNavButton()
                     }
                 }
             }
@@ -103,7 +107,7 @@ extension SheetView {
                 .opacity(showCheckmark ? 1 : 0)
             
             Button {
-                <#code#>
+                saveButtonPressed()
             } label: {
                 Text("Save")
                     .opacity(selectedCoin != nil && selectedCoin?.currentHoldings != Double(amount) ? 1 : 0)
@@ -128,6 +132,21 @@ extension SheetView {
         guard let coin = selectedCoin else { return }
         
         //Save Coin to Portfolio
+        
+        //Show Checkmark
+        withAnimation {
+            showCheckmark = true
+            removeSelectedCoin()
+        }
+        //Hide Keyboard
+        UIApplication.shared.endEditing()
+        
+        //Hide Checkmark
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2){
+            withAnimation(.easeOut) {
+                showCheckmark = false
+            }
+        }
     }
     
     private func removeSelectedCoin() {
