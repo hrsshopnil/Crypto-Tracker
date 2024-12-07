@@ -14,6 +14,8 @@ struct SheetView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var amount = ""
     @State private var showCheckmark = false
+    @Environment(\.modelContext) private var context
+
     
     var body: some View {
         NavigationView {
@@ -130,9 +132,10 @@ extension SheetView {
     
     private func saveButtonPressed() {
         guard let coin = selectedCoin else { return }
-        
+        guard let amount = Double(amount) else { return }
         //Save Coin to Portfolio
-        
+        let portfolioItem = PortfolioItem(coinId: coin.id, currentHoldings: Double(amount))
+        context.insert(portfolioItem)
         //Show Checkmark
         withAnimation {
             showCheckmark = true

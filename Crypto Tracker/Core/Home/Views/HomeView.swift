@@ -6,12 +6,17 @@
 //
 
 import SwiftUI
+import SwiftData
+import Combine
 
 struct HomeView: View {
     
     @EnvironmentObject private var vm: HomeViewModel
     @State private var showPortfolio = false
     @State private var showSheet = false
+    @Environment(\.modelContext) private var context
+    @Query(sort: \PortfolioItem.currentHoldings) private var myCoins: [PortfolioItem]
+    
     
     var body: some View {
         NavigationView {
@@ -62,7 +67,6 @@ extension HomeView {
         List {
             ForEach(vm.portfolioCoins) { coin in
                 CoinRowView(coin: coin, showCenterColumn: true, image: coin.image)
-                
             }
         }
         .listStyle(.plain)
@@ -115,6 +119,19 @@ extension HomeView {
                 }
             
         }
-
+        
     }
+    
+    //    private func getMyCoins() {
+    //        print("all\(String(describing: vm.$allCoins.count))")
+    //        myCoins.compactMap { coin -> CoinModel? in
+    //            print(coin.coinId)
+    //            print(vm.allCoins.count)
+    //            guard let entity = vm.allCoins.first(where: { $0.id == coin.coinId}) else { print("failed")
+    //                return nil
+    //            }
+    //            print(entity.name)
+    //            return entity
+    //        }
+    //    }
 }
