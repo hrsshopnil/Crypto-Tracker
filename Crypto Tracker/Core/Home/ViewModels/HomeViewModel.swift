@@ -74,18 +74,27 @@ class HomeViewModel: ObservableObject {
     private func getMarketData(data: MarketDataModel?, portfolioCoins: [CoinModel]) -> [StatisticsModel] {
         guard let data else { return [] }
         
-        let value = portfolioCoins
+        let portfolioValue = portfolioCoins
             .map { $0.currentHoldingsValue }
             .reduce(0, +)
         
-        let change = portfolioCoins
-            .map { $0.priceChangePercentage24H ?? 0 }
+        let previousValue = portfolioCoins
+            .map { coin -> Double in
+                let currentValue = coin.currentPrice
+                let priceChange = coin.priceChangePercentage24H ?? 0 / 100
+                let previousValue = currentValue / (1 + priceChange)
+                return previousValue
+            }
             .reduce(0, +)
         
-        return [StatisticsModel(title: "Market Cap", value: data.marketCap, percentageChange: data.marketCapChangePercentage24HUsd),
-                StatisticsModel(title: "24h Volume", value: data.volume),
-                StatisticsModel(title: "BTC Dominance", value: data.btcDominance),
-                StatisticsModel(title: "Portfolio Value", value: value.asCurrencyWith2Decimals(), percentageChange: change)]
+        let change = ((portfolioValue - previousValue) / previousValue) * 100
+        
+        return [
+            StatisticsModel(title: "Market Cap", value: data.marketCap, percentageChange: data.marketCapChangePercentage24HUsd),
+            StatisticsModel(title: "24h Volume", value: data.volume),
+            StatisticsModel(title: "BTC Dominance", value: data.btcDominance),
+            StatisticsModel(title: "Portfolio Value", value: portfolioValue.asCurrencyWith2Decimals(), percentageChange: change)
+        ]
     }
     
     func fetchMyCoins() {

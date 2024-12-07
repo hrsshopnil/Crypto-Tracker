@@ -130,11 +130,12 @@ extension SheetView {
         guard let coin = selectedCoin else { return }
         guard let amount = Double(amount) else { return }
         let item = PortfolioItem(coinId: coin.id, currentHoldings: amount)
+        
         //Save Coin to Portfolio
         if amount <= 0 {
-            let fetchDescriptor = FetchDescriptor<PortfolioItem>(
-                sortBy: [SortDescriptor(\.currentHoldings, order: .forward)]
-            )
+            
+            let fetchDescriptor = FetchDescriptor<PortfolioItem>()
+            
             do {
                 let item = try context.fetch(fetchDescriptor)
                 
@@ -157,6 +158,8 @@ extension SheetView {
                 print("error saving")
             }
         }
+        
+        
         vm.fetchMyCoins()
         //Show Checkmark
         withAnimation {
