@@ -44,6 +44,7 @@ struct HomeView: View {
             .onAppear {
                 vm.context = context
                 vm.fetchMyCoins()
+                vm.fetchCurrentValue()
             }
         }
     }
@@ -65,7 +66,9 @@ extension HomeView {
     private func portfolioCoinsList() -> some View {
         List {
             ForEach(vm.portfolioCoins) { coin in
-                CoinRowView(coin: coin, showCenterColumn: true, image: coin.image)
+                if coin.currentHoldings ?? 0 > 0 {
+                    CoinRowView(coin: coin, showCenterColumn: true, image: coin.image)
+                }
             }
         }
         .listStyle(.plain)
@@ -116,8 +119,13 @@ extension HomeView {
                         showPortfolio.toggle()
                     }
                 }
-            
         }
-        
     }
+    
+//    private func currentValue() -> Double {
+//        let price = vm.portfolioCoins.map { $0.currentHoldingsValue }
+//        for value in price {
+//            
+//        }
+//    }
 }

@@ -44,6 +44,11 @@ struct SheetView: View {
                     }
                 }
             }
+            .onAppear {
+                
+                //amount = "\(selectedCoin?.currentHoldings)"
+                
+            }
         }
     }
     
@@ -62,7 +67,7 @@ extension SheetView {
                         .padding(8)
                         .onTapGesture {
                             withAnimation {
-                                selectedCoin = coin
+                                updateSelectedCoin(coin: coin)
                             }
                         }
                         .background {
@@ -135,6 +140,7 @@ extension SheetView {
         let portfolioItem = PortfolioItem(coinId: coin.id, currentHoldings: Double(amount))
         context.insert(portfolioItem)
         vm.fetchMyCoins()
+        vm.fetchCurrentValue()
         //Show Checkmark
         withAnimation {
             showCheckmark = true
@@ -154,5 +160,16 @@ extension SheetView {
     private func removeSelectedCoin() {
         selectedCoin = nil
         vm.searchText = ""
+    }
+    
+    private func updateSelectedCoin(coin: CoinModel) {
+        selectedCoin = coin
+        
+        if let portfolioCoin = vm.portfolioCoins.first(where: { $0.id == coin.id }),
+           let quantity = portfolioCoin.currentHoldings {
+            amount = "\(quantity)"
+        } else {
+            amount = ""
+        }
     }
 }

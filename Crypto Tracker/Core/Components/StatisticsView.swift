@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct StatisticsView: View {
+    @ObservedObject var vm: HomeViewModel
     let stat: StatisticsModel
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -28,9 +29,19 @@ struct StatisticsView: View {
             }
             .foregroundStyle(((stat.percentageChange) ?? 0 >= 0) ? .green : .red)
         }
+//        .onAppear {
+//            let price = vm.portfolioCoins.map { $0.currentHoldingsValue }
+//            var hold = 0.0
+//            for value in price {
+//                hold += value
+//            }
+//            
+//            stat.updateHoldingValue(with: "\(hold)")
+//            stat = 
+//        }
     }
 }
 
 #Preview {
-    StatisticsView(stat: .placeHolder2)
+    StatisticsView(vm: HomeViewModel(), stat: .placeHolder2)
 }

@@ -21,4 +21,8 @@ struct StatisticsModel: Identifiable {
     
     static let placeHolder1 = StatisticsModel(title: "Market Cap", value: "$23B")
     static let placeHolder2 = StatisticsModel(title: "Market Cap", value: "$45Tr", percentageChange: -34.5)
+    
+    func updateHoldingValue(with newValue: String) -> StatisticsModel {
+        return StatisticsModel(title: title, value: newValue, percentageChange: percentageChange)
+    }
 }

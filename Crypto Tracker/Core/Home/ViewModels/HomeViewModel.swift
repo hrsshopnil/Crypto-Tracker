@@ -16,6 +16,7 @@ class HomeViewModel: ObservableObject {
     @Published var myCoins: [PortfolioItem] = []
     @Published var searchText: String = ""
     @Published var stats: [StatisticsModel] = []
+    @Published var totalValue: Double = 0
     
     
     var cancellables: Set<AnyCancellable> = []
@@ -38,12 +39,6 @@ class HomeViewModel: ObservableObject {
                 self?.allCoins = coins
             }.store(in: &cancellables)
         
-        marketService.$marketData
-            .map(getMarketDate)
-            .sink {[weak self] stats in
-                self?.stats = stats
-            }.store(in: &cancellables)
-        
         $allCoins
             .combineLatest($myCoins)
             .map { (coinModels, portfolioEntities) -> [CoinModel] in
@@ -57,6 +52,12 @@ class HomeViewModel: ObservableObject {
                 self?.portfolioCoins = recievedCoins
             }
             .store(in: &cancellables)
+        
+        marketService.$marketData
+            .map(getMarketDate)
+            .sink {[weak self] stats in
+                self?.stats = stats
+            }.store(in: &cancellables)
     }
     
     
@@ -76,7 +77,7 @@ class HomeViewModel: ObservableObject {
         return [StatisticsModel(title: "Market Cap", value: data.marketCap, percentageChange: data.marketCapChangePercentage24HUsd),
                 StatisticsModel(title: "24h Volume", value: data.volume),
                 StatisticsModel(title: "BTC Dominance", value: data.btcDominance),
-                StatisticsModel(title: "Portfolio Value", value: "00", percentageChange: 00)]
+                StatisticsModel(title: "Portfolio Value", value: "\(totalValue)", percentageChange: 00)]
     }
     
     func fetchMyCoins() {
@@ -90,6 +91,13 @@ class HomeViewModel: ObservableObject {
             }
         } catch {
             print("Error fetching tasks: \(error.localizedDescription)")
+        }
+    }
+    
+    func fetchCurrentValue() {
+       let price = portfolioCoins.map { $0.currentHoldingsValue }
+        for value in price {
+            totalValue += value
         }
     }
 }
