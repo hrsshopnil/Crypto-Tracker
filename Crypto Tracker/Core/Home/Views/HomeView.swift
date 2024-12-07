@@ -11,12 +11,10 @@ import Combine
 
 struct HomeView: View {
     
-    @EnvironmentObject private var vm: HomeViewModel
+    @StateObject private var vm = HomeViewModel()
     @State private var showPortfolio = false
     @State private var showSheet = false
-    @Environment(\.modelContext) private var context
-    @Query(sort: \PortfolioItem.currentHoldings) private var myCoins: [PortfolioItem]
-    
+    @Environment(\.modelContext) var context
     
     var body: some View {
         NavigationView {
@@ -25,7 +23,7 @@ struct HomeView: View {
                     homeHeader()
                         .padding(.horizontal)
                         .padding(.bottom)
-                    HomeStatView(showPortfolio: $showPortfolio)
+                    HomeStatView(vm: vm, showPortfolio: $showPortfolio)
                     SearchBar(text: $vm.searchText)
                     columnTitles()
                         .padding(.horizontal, 21)
@@ -38,19 +36,20 @@ struct HomeView: View {
                     }
                 }
                 .sheet(isPresented: $showSheet) {
-                    SheetView()
+                    SheetView(vm: vm)
                         .environmentObject(vm)
                 }
             }
             .navigationBarHidden(true)
+            .onAppear {
+                vm.context = context
+                vm.fetchMyCoins()
+            }
         }
     }
 }
 
-#Preview {
-    HomeView()
-        .environmentObject(HomeViewModel())
-}
+
 
 extension HomeView {
     private func allCoinsList() -> some View {
@@ -121,17 +120,4 @@ extension HomeView {
         }
         
     }
-    
-    //    private func getMyCoins() {
-    //        print("all\(String(describing: vm.$allCoins.count))")
-    //        myCoins.compactMap { coin -> CoinModel? in
-    //            print(coin.coinId)
-    //            print(vm.allCoins.count)
-    //            guard let entity = vm.allCoins.first(where: { $0.id == coin.coinId}) else { print("failed")
-    //                return nil
-    //            }
-    //            print(entity.name)
-    //            return entity
-    //        }
-    //    }
 }

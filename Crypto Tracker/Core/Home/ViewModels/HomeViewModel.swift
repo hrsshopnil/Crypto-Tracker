@@ -7,18 +7,23 @@
 
 import Foundation
 import Combine
+import SwiftData
+import SwiftUI
 
 class HomeViewModel: ObservableObject {
     @Published var allCoins: [CoinModel] = [.placeHolder]
     @Published var portfolioCoins: [CoinModel] = []
+    @Published var myCoins: [PortfolioItem] = []
     @Published var searchText: String = ""
     @Published var stats: [StatisticsModel] = []
+    
     
     var cancellables: Set<AnyCancellable> = []
     private var coinService = CoinDataService()
     private var marketService = MarketDataService()
-    @Published var myCoins: [PortfolioItem] = [PortfolioItem(coinId: "ethereum", currentHoldings: 2),
-                                               PortfolioItem(coinId: "ripple", currentHoldings: 3)]
+    var context: ModelContext? = nil
+    //@Published var myCoins: [PortfolioItem] = [PortfolioItem(coinId: "ethereum", currentHoldings: 2),
+    //                                           PortfolioItem(coinId: "ripple", currentHoldings: 3)]
     
     init() {
         fetchAllCoins()
@@ -54,6 +59,7 @@ class HomeViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
+    
     private func filterCoins(text: String, coins: [CoinModel]) -> [CoinModel] {
         guard !text.isEmpty else { return coins }
         
@@ -71,5 +77,19 @@ class HomeViewModel: ObservableObject {
                 StatisticsModel(title: "24h Volume", value: data.volume),
                 StatisticsModel(title: "BTC Dominance", value: data.btcDominance),
                 StatisticsModel(title: "Portfolio Value", value: "00", percentageChange: 00)]
+    }
+    
+    func fetchMyCoins() {
+        let fetchDescriptor = FetchDescriptor<PortfolioItem>(
+            sortBy: [SortDescriptor(\.currentHoldings, order: .forward)]
+        )
+        
+        do {
+            if let safeContext = context {
+                myCoins = try safeContext.fetch(fetchDescriptor)
+            }
+        } catch {
+            print("Error fetching tasks: \(error.localizedDescription)")
+        }
     }
 }

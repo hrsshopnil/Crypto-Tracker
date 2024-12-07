@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct SheetView: View {
     
-    @EnvironmentObject private var vm: HomeViewModel
+    @ObservedObject var vm: HomeViewModel
     @State var selectedCoin: CoinModel?
     @Environment(\.dismiss) private var dismiss
     @State private var amount = ""
@@ -49,10 +50,7 @@ struct SheetView: View {
     
 }
 
-#Preview {
-    SheetView(selectedCoin: .placeHolder)
-        .environmentObject(HomeViewModel())
-}
+
 
 // MARK: Views
 extension SheetView {
@@ -136,6 +134,7 @@ extension SheetView {
         //Save Coin to Portfolio
         let portfolioItem = PortfolioItem(coinId: coin.id, currentHoldings: Double(amount))
         context.insert(portfolioItem)
+        vm.fetchMyCoins()
         //Show Checkmark
         withAnimation {
             showCheckmark = true

@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HomeStatView: View {
     
-    @EnvironmentObject var vm: HomeViewModel
+    @ObservedObject var vm: HomeViewModel
     @Binding var showPortfolio: Bool
     
     var body: some View {
@@ -26,7 +27,3 @@ struct HomeStatView: View {
     }
 }
 
-#Preview {
-    HomeStatView(showPortfolio: .constant(false))
-        .environmentObject(HomeViewModel())
-}
