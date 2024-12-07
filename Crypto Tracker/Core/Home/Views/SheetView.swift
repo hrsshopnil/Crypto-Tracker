@@ -44,15 +44,8 @@ struct SheetView: View {
                     }
                 }
             }
-            .onAppear {
-                
-                //amount = "\(selectedCoin?.currentHoldings)"
-                
-            }
         }
     }
-    
-    
 }
 
 
@@ -136,11 +129,35 @@ extension SheetView {
     private func saveButtonPressed() {
         guard let coin = selectedCoin else { return }
         guard let amount = Double(amount) else { return }
+        let item = PortfolioItem(coinId: coin.id, currentHoldings: amount)
         //Save Coin to Portfolio
-        let portfolioItem = PortfolioItem(coinId: coin.id, currentHoldings: Double(amount))
-        context.insert(portfolioItem)
+        if amount <= 0 {
+            let fetchDescriptor = FetchDescriptor<PortfolioItem>(
+                sortBy: [SortDescriptor(\.currentHoldings, order: .forward)]
+            )
+            do {
+                let item = try context.fetch(fetchDescriptor)
+                
+                if let itemToDelete = item.first(where: { $0.coinId == coin.id }) {
+                    
+                    context.delete(itemToDelete)
+                    try context.save()
+                    
+                } else {
+                    print("No matching item found to delete")
+                }
+            } catch {
+                print("Error Deleting Item")
+            }
+        } else {
+            context.insert(item)
+            do {
+                try context.save()
+            } catch {
+                print("error saving")
+            }
+        }
         vm.fetchMyCoins()
-        vm.fetchCurrentValue()
         //Show Checkmark
         withAnimation {
             showCheckmark = true

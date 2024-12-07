@@ -16,7 +16,6 @@ class HomeViewModel: ObservableObject {
     @Published var myCoins: [PortfolioItem] = []
     @Published var searchText: String = ""
     @Published var stats: [StatisticsModel] = []
-    @Published var totalValue: Double = 0
     
     
     var cancellables: Set<AnyCancellable> = []
@@ -54,7 +53,8 @@ class HomeViewModel: ObservableObject {
             .store(in: &cancellables)
         
         marketService.$marketData
-            .map(getMarketDate)
+            .combineLatest($portfolioCoins)
+            .map(getMarketData)
             .sink {[weak self] stats in
                 self?.stats = stats
             }.store(in: &cancellables)
@@ -71,13 +71,21 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    private func getMarketDate(data: MarketDataModel?) -> [StatisticsModel] {
+    private func getMarketData(data: MarketDataModel?, portfolioCoins: [CoinModel]) -> [StatisticsModel] {
         guard let data else { return [] }
+        
+        let value = portfolioCoins
+            .map { $0.currentHoldingsValue }
+            .reduce(0, +)
+        
+        let change = portfolioCoins
+            .map { $0.priceChangePercentage24H ?? 0 }
+            .reduce(0, +)
         
         return [StatisticsModel(title: "Market Cap", value: data.marketCap, percentageChange: data.marketCapChangePercentage24HUsd),
                 StatisticsModel(title: "24h Volume", value: data.volume),
                 StatisticsModel(title: "BTC Dominance", value: data.btcDominance),
-                StatisticsModel(title: "Portfolio Value", value: "\(totalValue)", percentageChange: 00)]
+                StatisticsModel(title: "Portfolio Value", value: value.asCurrencyWith2Decimals(), percentageChange: change)]
     }
     
     func fetchMyCoins() {
@@ -91,13 +99,6 @@ class HomeViewModel: ObservableObject {
             }
         } catch {
             print("Error fetching tasks: \(error.localizedDescription)")
-        }
-    }
-    
-    func fetchCurrentValue() {
-       let price = portfolioCoins.map { $0.currentHoldingsValue }
-        for value in price {
-            totalValue += value
         }
     }
 }

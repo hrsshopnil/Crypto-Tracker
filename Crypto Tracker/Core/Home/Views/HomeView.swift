@@ -44,7 +44,6 @@ struct HomeView: View {
             .onAppear {
                 vm.context = context
                 vm.fetchMyCoins()
-                vm.fetchCurrentValue()
             }
         }
     }
@@ -121,11 +120,4 @@ extension HomeView {
                 }
         }
     }
-    
-//    private func currentValue() -> Double {
-//        let price = vm.portfolioCoins.map { $0.currentHoldingsValue }
-//        for value in price {
-//            
-//        }
-//    }
 }
