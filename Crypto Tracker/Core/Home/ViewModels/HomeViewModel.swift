@@ -16,14 +16,12 @@ class HomeViewModel: ObservableObject {
     @Published var myCoins: [PortfolioItem] = []
     @Published var searchText: String = ""
     @Published var stats: [StatisticsModel] = []
-    
+    //@Published var isLoading: Bool = false
     
     var cancellables: Set<AnyCancellable> = []
     private var coinService = CoinDataService()
     private var marketService = MarketDataService()
     var context: ModelContext? = nil
-    //@Published var myCoins: [PortfolioItem] = [PortfolioItem(coinId: "ethereum", currentHoldings: 2),
-    //                                           PortfolioItem(coinId: "ripple", currentHoldings: 3)]
     
     init() {
         fetchAllCoins()
@@ -51,6 +49,7 @@ class HomeViewModel: ObservableObject {
             .map(getMarketData)
             .sink {[weak self] stats in
                 self?.stats = stats
+                //self?.isLoading = false
             }.store(in: &cancellables)
     }
     
@@ -116,5 +115,14 @@ class HomeViewModel: ObservableObject {
         } catch {
             print("Error fetching tasks: \(error.localizedDescription)")
         }
+    }
+    
+    ///Realoding Data
+    func reloadData() {
+        //isLoading = true
+        print("loading")
+        coinService.getCoins()
+        marketService.getMarketData()
+        print("loaded")
     }
 }

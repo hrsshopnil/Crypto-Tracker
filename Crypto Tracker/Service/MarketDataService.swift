@@ -13,10 +13,10 @@ class MarketDataService: ObservableObject {
     var manager = NetworkManager()
     
     init() {
-        getCoins()
+        getMarketData()
     }
     
-    private func getCoins() {
+    func getMarketData() {
         
         manager.fetchData(from: "https://api.coingecko.com/api/v3/global", decodingTo: GlobalData.self) {[weak self] result in
             do {
