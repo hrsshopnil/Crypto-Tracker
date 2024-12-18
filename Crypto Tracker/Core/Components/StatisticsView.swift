@@ -29,16 +29,6 @@ struct StatisticsView: View {
             }
             .foregroundStyle(((stat.percentageChange) ?? 0 >= 0) ? .green : .red)
         }
-//        .onAppear {
-//            let price = vm.portfolioCoins.map { $0.currentHoldingsValue }
-//            var hold = 0.0
-//            for value in price {
-//                hold += value
-//            }
-//            
-//            stat.updateHoldingValue(with: "\(hold)")
-//            stat = 
-//        }
     }
 }
 

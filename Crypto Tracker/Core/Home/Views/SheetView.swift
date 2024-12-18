@@ -116,7 +116,9 @@ extension SheetView {
     
 }
 
-
+#Preview {
+    SheetView(vm: HomeViewModel(), selectedCoin: .placeHolder)
+}
 // MARK: Functions
 extension SheetView {
     private func getCurrentValue() -> Double {
@@ -159,8 +161,8 @@ extension SheetView {
             }
         }
         
-        
         vm.fetchMyCoins()
+        
         //Show Checkmark
         withAnimation {
             showCheckmark = true

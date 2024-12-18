@@ -40,13 +40,7 @@ class HomeViewModel: ObservableObject {
         
         $allCoins
             .combineLatest($myCoins)
-            .map { (coinModels, portfolioEntities) -> [CoinModel] in
-                coinModels
-                    .compactMap { coin -> CoinModel? in
-                        guard let entity = portfolioEntities.first(where: { $0.coinId == coin.id }) else { return nil }
-                        return coin.updateHoldings(amount: entity.currentHoldings)
-                    }
-            }
+            .map(getHoldings)
             .sink { [weak self] recievedCoins in
                 self?.portfolioCoins = recievedCoins
             }
@@ -60,7 +54,7 @@ class HomeViewModel: ObservableObject {
             }.store(in: &cancellables)
     }
     
-    
+    ///Filtering Coins as per Search Text
     private func filterCoins(text: String, coins: [CoinModel]) -> [CoinModel] {
         guard !text.isEmpty else { return coins }
         
@@ -71,6 +65,17 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    ///Filtering Coins for user Portfolio
+    private func getHoldings(allCoins: [CoinModel], portfolioItem: [PortfolioItem]) -> [CoinModel] {
+        allCoins
+            .compactMap { coin -> CoinModel? in
+                guard let entity = portfolioItem.first(where: { $0.coinId == coin.id }) else { return nil }
+                return coin.updateHoldings(amount: entity.currentHoldings)
+            }
+        
+    }
+    
+    ///Mapping Market Data
     private func getMarketData(data: MarketDataModel?, portfolioCoins: [CoinModel]) -> [StatisticsModel] {
         guard let data else { return [] }
         
@@ -80,9 +85,10 @@ class HomeViewModel: ObservableObject {
         
         let previousValue = portfolioCoins
             .map { coin -> Double in
-                let currentValue = coin.currentPrice
-                let priceChange = coin.priceChangePercentage24H ?? 0 / 100
-                let previousValue = currentValue / (1 + priceChange)
+                let currentValue = coin.currentHoldingsValue
+                let pricehange = coin.priceChangePercentage24H ?? 0
+                let percentChange = pricehange / 100
+                let previousValue = currentValue / (1 + percentChange)
                 return previousValue
             }
             .reduce(0, +)
@@ -97,6 +103,7 @@ class HomeViewModel: ObservableObject {
         ]
     }
     
+    ///Fetching the Coins
     func fetchMyCoins() {
         let fetchDescriptor = FetchDescriptor<PortfolioItem>(
             sortBy: [SortDescriptor(\.currentHoldings, order: .forward)]
