@@ -74,15 +74,43 @@ extension HomeView {
     
     private func columnTitles() -> some View {
         HStack {
-            Text("Coin")
+            HStack {
+                Text("Coin")
+                Image(systemName: "chevron.down")
+                    .opacity(vm.sortOptions == .ranked || vm.sortOptions == .reverseRanked ? 1 : 0)
+                    .rotationEffect(Angle(degrees: vm.sortOptions == .ranked ? 0 : 180))
+            }
+            .onTapGesture {
+                withAnimation(.default) {
+                    vm.sortOptions = vm.sortOptions == .ranked ? .reverseRanked : .ranked
+                }
+            }
             Spacer()
             if showPortfolio {
-                Text("Holdings")
-                
-                    .padding(.trailing, 6)
+                HStack {
+                    Text("Holdings")
+                    Image(systemName: "chevron.down")
+                        .opacity(vm.sortOptions == .holdings || vm.sortOptions == .reverseHoldings ? 1 : 0)
+                        .rotationEffect(Angle(degrees: vm.sortOptions == .holdings ? 0 : 180))
+                }
+                .onTapGesture {
+                    withAnimation(.default) {
+                        vm.sortOptions = vm.sortOptions == .holdings ? .reverseHoldings : .holdings
+                    }
+                }
             }
-            Text("Price")
-                .frame(width: UIScreen.main.bounds.width / 3.5, alignment: .trailing)
+            Spacer()
+            HStack {
+                Text("Price")
+                Image(systemName: "chevron.down")
+                    .opacity(vm.sortOptions == .price || vm.sortOptions == .reversePrice ? 1 : 0)
+                    .rotationEffect(Angle(degrees: vm.sortOptions == .price ? 0 : 180))
+            }
+            .onTapGesture {
+                withAnimation(.default) {
+                    vm.sortOptions = vm.sortOptions == .price ? .reversePrice : .price
+                }
+            }
             
             Button {
                 withAnimation(.linear(duration: 2.0)) {
