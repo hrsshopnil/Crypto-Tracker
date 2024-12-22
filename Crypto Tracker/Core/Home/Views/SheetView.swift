@@ -55,21 +55,41 @@ extension SheetView {
     private func coinsList() -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(spacing: 8) {
-                ForEach(vm.allCoins) { coin in
-                    CoinLogoView(coin: coin)
-                        .padding(8)
-                        .onTapGesture {
-                            withAnimation {
-                                updateSelectedCoin(coin: coin)
+                if vm.searchText.isEmpty {
+                    ForEach(vm.portfolioCoins) { coin in
+                        CoinLogoView(coin: coin)
+                            .padding(8)
+                            .onTapGesture {
+                                withAnimation {
+                                    updateSelectedCoin(coin: coin)
+                                }
                             }
-                        }
-                        .background {
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(selectedCoin?.id == coin.id ? .green : .clear, lineWidth: 2)
-                        }
+                            .background {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(selectedCoin?.id == coin.id ? .green : .clear, lineWidth: 2)
+                            }
+                    }
+                    .padding(.leading, 16)
+                    .padding(.vertical, 6)
+                } else {
+                    ForEach(vm.allCoins) { coin in
+                        CoinLogoView(coin: coin)
+                            .padding(8)
+                            .onTapGesture {
+                                withAnimation {
+                                    updateSelectedCoin(coin: coin)
+                                }
+                            }
+                            .background {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .stroke(selectedCoin?.id == coin.id ? .green : .clear, lineWidth: 2)
+                            }
+                    }
+                    .padding(.leading, 16)
+                    .padding(.vertical, 6)
                 }
-                .padding(.leading, 16)
-                .padding(.vertical, 6)
+
+
             }
         }
     }
@@ -117,7 +137,7 @@ extension SheetView {
 }
 
 #Preview {
-    SheetView(vm: HomeViewModel(), selectedCoin: .placeHolder)
+    SheetView(vm: HomeViewModel())
 }
 // MARK: Functions
 extension SheetView {
@@ -131,34 +151,27 @@ extension SheetView {
     private func saveButtonPressed() {
         guard let coin = selectedCoin else { return }
         guard let amount = Double(amount) else { return }
-        let item = PortfolioItem(coinId: coin.id, currentHoldings: amount)
+        let coinToSave = PortfolioItem(coinId: coin.id, currentHoldings: amount)
         
         //Save Coin to Portfolio
-        if amount <= 0 {
-            
-            let fetchDescriptor = FetchDescriptor<PortfolioItem>()
-            
-            do {
-                let item = try context.fetch(fetchDescriptor)
-                
-                if let itemToDelete = item.first(where: { $0.coinId == coin.id }) {
-                    
-                    context.delete(itemToDelete)
+        
+        let fetchDescriptor = FetchDescriptor<PortfolioItem>()
+        
+        do {
+            let item = try context.fetch(fetchDescriptor)
+            if let itemToUpdate = item.first(where: { $0.coinId == coin.id }) {
+                if amount <= 0 {
+                    context.delete(itemToUpdate)
                     try context.save()
-                    
                 } else {
-                    print("No matching item found to delete")
+                    itemToUpdate.currentHoldings = amount
+                    try context.save()
                 }
-            } catch {
-                print("Error Deleting Item")
+            } else {
+                context.insert(coinToSave)
             }
-        } else {
-            context.insert(item)
-            do {
-                try context.save()
-            } catch {
-                print("error saving")
-            }
+        } catch {
+            print("Error Deleting Item")
         }
         
         vm.fetchMyCoins()

@@ -65,9 +65,8 @@ extension HomeView {
     private func portfolioCoinsList() -> some View {
         List {
             ForEach(vm.portfolioCoins) { coin in
-                if coin.currentHoldings ?? 0 > 0 {
-                    CoinRowView(coin: coin, showCenterColumn: true, image: coin.image)
-                }
+                CoinRowView(coin: coin, showCenterColumn: true, image: coin.image)
+                
             }
         }
         .listStyle(.plain)

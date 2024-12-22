@@ -119,10 +119,8 @@ class HomeViewModel: ObservableObject {
     
     ///Realoding Data
     func reloadData() {
-        //isLoading = true
-        print("loading")
+
         coinService.getCoins()
         marketService.getMarketData()
-        print("loaded")
     }
 }
