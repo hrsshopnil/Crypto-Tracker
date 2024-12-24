@@ -14,10 +14,12 @@ struct HomeView: View {
     @StateObject private var vm = HomeViewModel()
     @State private var showPortfolio = false
     @State private var showSheet = false
+    @State private var selectedCoin: CoinModel?
+    @State private var showDetailView = false
     @Environment(\.modelContext) var context
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 VStack(spacing: 0) {
                     homeHeader()
@@ -45,28 +47,37 @@ struct HomeView: View {
                 vm.context = context
                 vm.fetchMyCoins()
             }
+            
+            .navigationDestination(isPresented: $showDetailView) {
+                LoadingView(coin: $selectedCoin)
+            }
         }
     }
 }
 
 
-
+// MARK: Views
 extension HomeView {
     private func allCoinsList() -> some View {
         List {
             ForEach(vm.allCoins) { coin in
-                CoinRowView(coin: coin, showCenterColumn: false, image: coin.image)
-                
+                    CoinRowView(coin: coin, showCenterColumn: false, image: coin.image)
+                    .onTapGesture {
+                        segue(coin: coin)
+                    }
+                }
             }
-        }
         .listStyle(.plain)
     }
     
+    private func segue(coin: CoinModel) {
+        selectedCoin = coin
+        showDetailView.toggle()
+    }
     private func portfolioCoinsList() -> some View {
         List {
             ForEach(vm.portfolioCoins) { coin in
                 CoinRowView(coin: coin, showCenterColumn: true, image: coin.image)
-                
             }
         }
         .listStyle(.plain)

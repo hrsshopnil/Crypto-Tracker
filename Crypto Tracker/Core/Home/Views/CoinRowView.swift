@@ -15,14 +15,16 @@ struct CoinRowView: View {
         HStack(spacing: 12) {
             leftColumn()
             
-            Spacer()
+            
             if showCenterColumn {
                 centerColumn()
             }
+            Spacer()
             rightColumn()
             
         }
         .font(.subheadline)
+        .contentShape(Rectangle())
     }
 }
 
@@ -58,7 +60,6 @@ extension CoinRowView {
                     (coin.priceChangePercentage24H ?? 0) >= 0 ? .green : .red
                 )
         }
-        
         .frame(width: UIScreen.main.bounds.width / 3.5, alignment: .trailing)
     }
     
