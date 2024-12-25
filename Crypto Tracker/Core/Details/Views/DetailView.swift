@@ -17,18 +17,94 @@ struct LoadingView: View {
         }
     }
 }
+
 struct DetailView: View {
-    var coin: CoinModel
+    let coin: CoinModel
+    @StateObject private var vm: CoinDetailViewModel
+    
+    private let columns: [GridItem] = [
+        GridItem(.flexible()),
+        GridItem(.flexible())
+    ]
+    private let spacing: CGFloat = 30
     
     init(coin: CoinModel) {
         self.coin = coin
-        print("initialized")
+        _vm = StateObject(wrappedValue: CoinDetailViewModel(coin: coin))
     }
+    
     var body: some View {
-        Text(coin.name)
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 28) {
+                Spacer().frame(height: 150) // Empty space
+                
+                // Overview Section
+                SectionView(title: "Overview", content: {
+                    overviewGrid()
+                })
+                
+                // Additional Details Section
+                SectionView(title: "Additional Details", content: {
+                    additionalGrid()
+                })
+            }
+            .padding()
+        }
+        .navigationTitle(coin.name)
+        .navigationBarTitleDisplayMode(.large)
     }
 }
 
 #Preview {
-    DetailView(coin: .placeHolder)
+    NavigationView {
+        DetailView(coin: .placeHolder)
+    }
+}
+
+private extension DetailView {
+    
+    // Reusable Section View for Title and Content
+    struct SectionView<Content: View>: View {
+        let title: String
+        let content: () -> Content
+        
+        var body: some View {
+            VStack(spacing: 12) {
+                Text(title)
+                    .font(.title)
+                    .bold()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Divider()
+                
+                content() // Dynamic content passed from parent
+            }
+        }
+    }
+    
+    private func overviewGrid() -> some View {
+        LazyVGrid(
+            columns: columns,
+            alignment: .leading,
+            spacing: spacing,
+            content: {
+                ForEach(vm.overviewStatistics) { stat in
+                    StatisticsView(stat: stat)
+                }
+            }
+        )
+    }
+    
+    private func additionalGrid() -> some View {
+        LazyVGrid(
+            columns: columns,
+            alignment: .leading,
+            spacing: spacing,
+            content: {
+                ForEach(vm.additionalStatistics) { stat in
+                    StatisticsView(stat: stat)
+                }
+            }
+        )
+    }
 }

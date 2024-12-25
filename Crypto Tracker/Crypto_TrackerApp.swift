@@ -12,10 +12,12 @@ import SwiftData
 struct Crypto_TrackerApp: App {
     
     let container: ModelContainer
-
+    @StateObject private var vm = HomeViewModel()
+    
     var body: some Scene {
         WindowGroup {
             HomeView()
+                .environmentObject(vm)
                 .modelContainer(container)
         }
     }

@@ -11,7 +11,8 @@ import Combine
 
 struct HomeView: View {
     
-    @StateObject private var vm = HomeViewModel()
+    @EnvironmentObject var vm: HomeViewModel
+
     @State private var showPortfolio = false
     @State private var showSheet = false
     @State private var selectedCoin: CoinModel?
@@ -25,7 +26,7 @@ struct HomeView: View {
                     homeHeader()
                         .padding(.horizontal)
                         .padding(.bottom)
-                    HomeStatView(vm: vm, showPortfolio: $showPortfolio)
+                    HomeStatView(showPortfolio: $showPortfolio)
                     SearchBar(text: $vm.searchText)
                     columnTitles()
                         .padding(.horizontal, 21)
@@ -38,7 +39,7 @@ struct HomeView: View {
                     }
                 }
                 .sheet(isPresented: $showSheet) {
-                    SheetView(vm: vm)
+                    SheetView()
                         .environmentObject(vm)
                 }
             }

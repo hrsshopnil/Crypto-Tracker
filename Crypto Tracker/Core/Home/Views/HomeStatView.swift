@@ -10,13 +10,14 @@ import SwiftData
 
 struct HomeStatView: View {
     
-    @ObservedObject var vm: HomeViewModel
+    @EnvironmentObject var vm: HomeViewModel
+
     @Binding var showPortfolio: Bool
     
     var body: some View {
         HStack {
             ForEach(vm.stats) { stat in
-                StatisticsView(vm: vm, stat: stat)
+                StatisticsView(stat: stat)
                     .frame(width: UIScreen.main.bounds.width / 3)
             }
         }
@@ -27,5 +28,6 @@ struct HomeStatView: View {
 }
 
 #Preview {
-    HomeStatView(vm: HomeViewModel(), showPortfolio: .constant(true))
+    HomeStatView(showPortfolio: .constant(true))
+        .environmentObject(HomeViewModel())
 }

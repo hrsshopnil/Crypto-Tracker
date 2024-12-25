@@ -10,7 +10,8 @@ import SwiftData
 
 struct SheetView: View {
     
-    @ObservedObject var vm: HomeViewModel
+    @EnvironmentObject var vm: HomeViewModel
+
     @State var selectedCoin: CoinModel?
     @Environment(\.dismiss) private var dismiss
     @State private var amount = ""
@@ -137,7 +138,8 @@ extension SheetView {
 }
 
 #Preview {
-    SheetView(vm: HomeViewModel())
+    SheetView()
+        .environmentObject(HomeViewModel())
 }
 // MARK: Functions
 extension SheetView {
