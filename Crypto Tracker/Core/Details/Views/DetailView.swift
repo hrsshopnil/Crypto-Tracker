@@ -36,7 +36,8 @@ struct DetailView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 28) {
-                Spacer().frame(height: 150) // Empty space
+                LineGraphView(data: coin.sparklineIn7D?.price ?? [])
+                    .frame(height: 150) // Empty space
                 
                 // Overview Section
                 SectionView(title: "Overview", content: {

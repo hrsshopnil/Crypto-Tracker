@@ -16,9 +16,9 @@ struct Crypto_TrackerApp: App {
     
     var body: some Scene {
         WindowGroup {
-            HomeView()
-                .environmentObject(vm)
-                .modelContainer(container)
+            ContentView2()
+//                .environmentObject(vm)
+//                .modelContainer(container)
         }
     }
     
