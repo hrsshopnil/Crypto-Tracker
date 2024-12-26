@@ -12,11 +12,14 @@ struct ChartView2: View {
     let data: [Double]
     let maxY: Double
     let minY: Double
+    let lineColor: Color
     
     init(coin: CoinModel) {
         self.data = coin.sparklineIn7D?.price ?? []
         self.maxY = data.max() ?? 0
         self.minY = data.min() ?? 0
+        let line = data.last ?? 0 - (data.first ?? 0)
+        lineColor = line >= 0 ? Color.green : Color.red
     }
     var body: some View {
         Text("Hello, World!")
@@ -26,8 +29,14 @@ struct ChartView2: View {
 
 struct LineGraphView: View {
     let data: [Double]
+    let lineColor: Color
     @State private var selectedIndex: Int? = nil
     
+    init(data: [Double]) {
+        self.data = data
+        let line = data.last ?? 0 - (data.first ?? 0)
+        lineColor = line >= 0 ? Color.green : Color.red
+    }
     // Skipped data points
     var filteredData: [Double] {
         data.enumerated().compactMap { index, value in
@@ -47,7 +56,7 @@ struct LineGraphView: View {
                 gradientPath
                     .fill(
                         LinearGradient(
-                            gradient: Gradient(colors: [Color.blue.opacity(0.3), Color.clear]),
+                            gradient: Gradient(colors: [lineColor.opacity(0.3), Color.clear]),
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -55,19 +64,14 @@ struct LineGraphView: View {
                 
                 // Draw the graph line
                 path
-                    .stroke(
-                        LinearGradient(gradient: Gradient(colors: [Color.blue, Color.green]),
-                                       startPoint: .leading,
-                                       endPoint: .trailing),
-                        lineWidth: 2
-                    )
+                    .stroke(lineColor, lineWidth: 2)
                     .shadow(color: .gray.opacity(0.5), radius: 5)
                 
                 // Add points on the graph
                 ForEach(0..<filteredData.count, id: \.self) { index in
                     let point = pointPosition(for: index, in: geometry.size)
                     Circle()
-                        .fill(Color.blue)
+                        .fill(lineColor)
                         .frame(width: 6, height: 6)
                         .position(point)
                 }
@@ -103,7 +107,6 @@ struct LineGraphView: View {
                     }
             )
         }
-        .padding()
     }
     
     private func createPath(in size: CGSize) -> Path {

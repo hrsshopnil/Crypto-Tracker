@@ -53,11 +53,21 @@ struct DetailView: View {
         }
         .navigationTitle(coin.name)
         .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                HStack {
+                    Text(coin.symbol.uppercased())
+                        .font(.caption)
+                        .foregroundStyle(.gray)
+                    IconView(url: coin.image)
+                }
+            }
+        }
     }
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         DetailView(coin: .placeHolder)
     }
 }
