@@ -8,33 +8,15 @@
 import SwiftUI
 import Charts
 
-struct ChartView2: View {
-    let data: [Double]
-    let maxY: Double
-    let minY: Double
-    let lineColor: Color
-    
-    init(coin: CoinModel) {
-        self.data = coin.sparklineIn7D?.price ?? []
-        self.maxY = data.max() ?? 0
-        self.minY = data.min() ?? 0
-        let line = data.last ?? 0 - (data.first ?? 0)
-        lineColor = line >= 0 ? Color.green : Color.red
-    }
-    var body: some View {
-        Text("Hello, World!")
-    }
-}
-
-
 struct LineGraphView: View {
     let data: [Double]
     let lineColor: Color
     @State private var selectedIndex: Int? = nil
     
-    init(data: [Double]) {
-        self.data = data
-        let line = data.last ?? 0 - (data.first ?? 0)
+    init(coin: CoinModel) {
+        self.data = coin.sparklineIn7D?.price ?? []
+        let line = (data.last ?? 0) - (data.first ?? 0)
+        print(line)
         lineColor = line >= 0 ? Color.green : Color.red
     }
     // Skipped data points
@@ -94,6 +76,7 @@ struct LineGraphView: View {
                             .frame(width: 10, height: 10)
                     }
                     .position(point)
+                    .offset(y: -10)
                 }
             }
             .gesture(
@@ -154,37 +137,6 @@ struct LineGraphView: View {
 
 
 #Preview {
-    LineGraphView(data: [3478.056311776321,
-                     3505.442437564731,
-                     3400.815944475166,
-                     3368.514232745682,
-                     3413.397451654389,
-                     3450.8205603426563,
-                     3434.6754695380805,
-                     3412.768542009602,
-                     3371.21653467901,
-                     3451.6042336063933,
-                     3411.4753968388923,
-                     3357.01045656615,
-                     3360.8581730417823,
-                     3387.961763791733,
-                     3283.272115121036,
-                     3267.851348986128,
-                     3182.2867745405165,
-                     3114.5678000004355,
-                     3235.9703456739076,
-                     3293.6651530588515,
-                     3327.8482251441096,
-                     3366.9119442169485,
-                     3371.9880266542295,
-                     3437.2093843795724,
-                     3435.1644419517347,
-                     3476.1405215774685,
-                     3439.0338675677854,
-                     3436.878194769186,
-                     3471.857762759152,
-                     3468.658920056454,
-                     3457.810630267266,
-                     3474.6137560696175,
-                     3476.041164861941])
+    LineGraphView(coin: .placeHolder)
+        .padding(30)
 }

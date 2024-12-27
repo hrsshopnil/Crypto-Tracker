@@ -26,6 +26,7 @@ struct DetailView: View {
         GridItem(.flexible()),
         GridItem(.flexible())
     ]
+    
     private let spacing: CGFloat = 30
     
     init(coin: CoinModel) {
@@ -36,8 +37,8 @@ struct DetailView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 28) {
-                LineGraphView(data: coin.sparklineIn7D?.price ?? [])
-                    .frame(height: 150) // Empty space
+                LineGraphView(coin: coin)
+                    .frame(height: 150)
                 
                 // Overview Section
                 SectionView(title: "Overview", content: {

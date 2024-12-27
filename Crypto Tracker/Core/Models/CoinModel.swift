@@ -139,7 +139,7 @@ struct CoinModel: Identifiable, Codable, Hashable {
         atlDate: "2013-07-06T00:00:00.000Z",
         lastUpdated: "2021-03-13T23:18:10.268Z",
         sparklineIn7D: SparklineIn7D(price: [
-            98143.20797331037,
+            100000.20797331037,
             98759.73785158253,
             97157.32411807193,
             96448.90175250097,
